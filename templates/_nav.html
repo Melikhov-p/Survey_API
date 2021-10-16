@@ -1,0 +1,38 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light ">
+    <div class="container-fluid">
+        <div class="collapse navbar-collapse justify-content-center" id="navbarNavAltMarkup">
+            <div class="btn-group" role="group" aria-label="Basic outlined example">
+                <a class="btn btn-outline-primary" href="{% url 'main' %}">Главная</a>
+                <a class="btn btn-outline-primary" {% if request.user.is_authenticated %} href="{% url 'createsurvey' %}" {% else %} href="{% url 'login' %}" {% endif %}>Новый опрос</a>
+                <a class="btn btn-outline-primary" {% if request.user.is_authenticated %} data-bs-toggle="modal" data-bs-target="#staticBackdropAccount">{{ user.username }}</a>{% else %} href="{% url 'login' %}">Войти</a>{% endif %}
+            </div>
+        </div>
+    </div>
+</nav>
+<!-- MODAL -->
+                <div class="modal fade" id="staticBackdropAccount"
+                     data-bs-backdrop="static"
+                     data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                     aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="staticBackdropLabel">Управление аккаунтом</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                    <div class="form-floating">
+                                        <p>Имя пользователя: {{ user.username }}</p>
+                                        <p>Email: {{ user.email }}</p>
+                                        {% if request.user.is_superuser %}
+                                        <a href="/admin">панель управления</a>
+                                        {% endif %}
+                                    </div>
+                                    <div class="modal-footer justify-content-center">
+                                        <a class="btn btn-danger" href="{% url 'logout' %}" role="button">Выйти</a>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>

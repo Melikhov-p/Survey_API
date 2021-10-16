@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+
+            <div class="col-md-8" style="margin-left: 15%;">
+                {% for question in Questions %}
+                    <form method="post" action="{% url 'add_answer' question.pk %}">
+                    {% csrf_token %}
+                    <div class="card mt-3">
+                        <h5 class="card-header">{{ question.survey.survey_name }} | дата
+                            окончания: {{ question.survey.end_date }}
+                        {% if request.user.is_superuser %}
+                        <a href="{% url 'update_survey' question.survey.id %}" class="btn btn-outline-primary">Редактировать</a>
+                        <a href="{% url 'delete_survey' question.survey.id %}" class="btn btn-outline-danger">Удалить</a>
+                        {% endif %}
+                        </h5>
+                        <div class="card-body">
+                        <div>Описание: {{ question.survey.survey_description }}</div>
+                            <h5 class="card-title"> {{ question.question_text }} </h5>
+                            {% if question.question_type == '1' %} {# В зависимости от типа вопроса выводим либо инпут, либо чекбоксы(С выбором одного или нескольких вариантов) #}
+                                <input type="text" class="form-control" name="answer_input">
+                            {% endif %}
+                            {% if question.question_type == '2' %}
+                                {% for choice in choices %}{% if choice.question.id == question.id %}
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="choice" value="{{ choice.choice_text }}">
+                                        <label class="form-check-label" for="flexRadioDefault1">
+                                            {{ choice.choice_text }}
+                                        </label>
+                                    </div>{% endif %}
+                                {% endfor %}
+                            {% endif %}
+                            {% if question.question_type == '3' %}
+                                {% for choice in choices %}{% if choice.question.id == question.id %}
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" name="choice" value="{{ choice.choice_text }}">
+                                        <label class="form-check-label" for="flexSwitchCheckDefault">{{ choice.choice_text }}</label>
+                                    </div>
+                                {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        {% if request.user.is_authenticated %}
+                                    <button type="submit" class="btn btn-primary mt-3">Ответить</button>
+                            {% else %}
+                            <a class="btn btn-primary mt-3" href="{% url 'login' %}">Войти</a>
+                        {% endif %}
+                        </div>
+                    </div>
+                    </form>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

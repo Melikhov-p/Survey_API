@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h2 align="center">опрос: {{ survey.id }}</h2>
+    {{ form.errors }}
+    <form method="post" action="{% url 'update_survey' survey.id %}" style="padding-left: 28%">
+        {% csrf_token %}
+        <div class="container mt-3">
+            <div class="row">
+                <div class="col-md-7">
+                    <div class="mb-3">
+                    <label for="survey_name" class="form-label">Название</label>
+                    <input type="text" class="form-control" name="survey_name" value="{{ survey.survey_name }}">
+                </div>
+                <div class="mb-3">
+                    <label for="survey_description" class="form-label">Описание</label>
+                    <input type="text" class="form-control" name="survey_description" value="{{ survey.survey_description }}">
+                </div>
+                <div class="mb-3">
+                    <label for="survey_name" class="form-label">Вопрос</label>
+                    <input type="text" class="form-control" name="question_text" value="{{ question.question_text }}">
+                </div>
+                <select class="form-select mb-3" aria-label="Default select example" name="question_type">
+                    <option selected value="0">Тип вопроса</option>
+                    <option value="1">Ответ текстом</option>
+                    <option value="2">Выбор одного ответа</option>
+                    <option value="3">Выбор нескольких ответов</option>
+                </select>
+                    {% if choices %}
+                        <div class="mb-3" id="choises">
+                            <label for="survey_name" class="form-label">Варианты ответа (-ов) | Максимум 10
+                                вариантов</label>
+                            {% for choice in choices %}
+                            <input type="text" class="form-control mb-3" name="choice_{{ forloop.counter }}" value="{{ choice.choice_text }}">
+                        {% endfor %}
+                        <a class="btn btn-primary mt-3" onclick="AddChoise();">Добавить вариант</a>
+                        </div>
+                    {% endif %}
+                {{ form.end_date }}
+                <hr>
+                <div class="mb-3" style="display: flex; align-items: center;justify-content: center;">
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <script>
+    var i = {{ choices.count }} + 1;
+    function AddChoise() {
+        if (i < 11){
+            document.getElementById('choises').insertAdjacentHTML("beforeend", '<input type="text" class="form-control mt-3" name="choice_'+i+'">');
+            i += 1;
+            console.log(i)}
+    }
+    </script>
+{% endblock %}
