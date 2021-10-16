@@ -13,7 +13,11 @@ def HomePage(request):
         'Questions': Question.objects.filter(survey__end_date__gt=datetime.datetime.now()), #Отдаем только те опросы у которых дата окончания больше, чем ныняшняя дата
     }
     if request.user.is_authenticated:
-        context['answers'] = Answer.objects.filter(user_id=request.user.id)
+        query_answers = Answer.objects.filter(user_id=request.user.id)
+        answers = []
+        for answer in query_answers:
+            answers.append(answer.question.id)
+        context['answers'] = answers
 
     return render(request, 'index.html', context)
 
